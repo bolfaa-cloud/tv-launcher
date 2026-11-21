@@ -477,6 +477,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         settingsKeyPanel = cfg.settingsKeyPanel;
         settingsKeyClearTask = cfg.settingsKeyClearTask;
         COLUMNS = cfg.columns;
+        AppAdapter.applyShape(getResources());
         animations = cfg.animations;
         advancedEffects = cfg.animations && cfg.advancedEffects;
         reducedMotion = cfg.reducedMotion;

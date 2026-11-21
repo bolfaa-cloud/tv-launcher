@@ -425,7 +425,7 @@
 
     <!-- Basic motion is on; advanced effects are opt-in in the launcher's own Settings screen. -->
     <bool name="animations">true</bool>
-    <bool name="advanced_effects">false</bool>
+    <bool name="advanced_effects">true</bool>
 
     <!-- Optional Default-home tile; keep this key for existing themes and tile-ordering work.
          Off by default because the chooser is also available from launcher settings. -->
@@ -436,6 +436,11 @@
     <!-- Every app tile is its icon on a card tinted from that icon, name only under the focused tile,
          instead of each app's own banner. Off by default; a theme can set "uniform_tiles": true. -->
     <bool name="uniform_tiles">false</bool>
+    <!-- Анис ТВ: square tiles with rounded corners like a phone home screen, each app's own icon edge to edge
+         (AppAdapter.squircle). Implies uniform_tiles. -->
+    <bool name="squircle_tiles">true</bool>
+    <!-- Анис ТВ: the name next to the emblem in the header. -->
+    <string name="brand_name" translatable="false">Анис ТВ</string>
     <!-- Optional direct Home picker in the app library: OK toggles the checkmark, checked apps first.
          Off by default; a theme can set "app_library_selection": true (also needs app_library). -->
     <bool name="app_library_selection">false</bool>
@@ -492,7 +497,9 @@
          horizon glow around sunrise and sunset. 0 keeps the plain background (the default); 1 to 100
          sets its opacity. Around 60 reads clearly without hiding a wallpaper. Can also be set with
          "sky_intensity": 60 in a theme's config.json. -->
-    <integer name="sky_intensity">70</integer>
+    <integer name="sky_intensity">100</integer>
+    <!-- Анис ТВ: how far the time-of-day sky is pulled toward black, 0 to 90 %, so it reads as a dark wallpaper. -->
+    <integer name="sky_dim">45</integer>
     <!-- Where the TV is, in decimal degrees, so the sky's sunrise and sunset glows follow the real sun
          (computed on the TV, no network). Empty: a fixed temperate day, sunset glow around 19:00.
          Vilnius: 54.69 and 25.28. -->
@@ -521,7 +528,7 @@
     <!-- The glow behind the dock in the focused app's colour (red for YouTube, blue for Prime Video). false keeps
          only background_color or the wallpaper behind everything. Can also be set with "ambient_glow": false in a
          theme's config.json. -->
-    <bool name="ambient_glow">true</bool>
+    <bool name="ambient_glow">false</bool>
     <!-- true: when the focus moves to an app of another colour, the ambient glow takes the new colour in one frame
          instead of dimming and fading back in. Each frame of that fade repaints the whole screen, about 40 per key
          press, which a slow GPU such as the Mali-G52 cannot keep up with. Can also be set with "glow_snap" in a
@@ -559,7 +566,7 @@
     <!-- The focus highlight's look: glass (the default: a translucent slab with a bright top sheen, a crisp rim and a
          faint outer glow), rim (the crisp rim alone, no sheen, fill or glow, for a quiet focus over a wallpaper) or
          halo (the rim with a lighter outer glow). Can also be set with "glass_style": "rim" in a theme's config.json. -->
-    <string name="glass_style" translatable="false">glass</string>
+    <string name="glass_style" translatable="false">halo</string>
 
     <!-- Tiles drawn from the app's icon and name instead of its banner (for banners that crop badly). -->
     <string-array name="icon_tiles" translatable="false">

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Анис ТВ emblem: a round violet-to-teal badge with a white A. Used in the header next to the name. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path android:pathData="M24,0A24,24 0,1 1,24 48A24,24 0,1 1,24 0Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="6"
+                android:startY="4"
+                android:endX="42"
+                android:endY="44"
+                android:startColor="#FF7B5CFF"
+                android:endColor="#FF14A6A0" />
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M24,1.5A22.5,22.5 0,1 1,24 46.5A22.5,22.5 0,1 1,24 1.5Z"
+        android:strokeColor="#40FFFFFF"
+        android:strokeWidth="1" />
+    <path
+        android:pathData="M15,35L24,12.5L33,35M18.6,27H29.4"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="3.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />
+</vector>

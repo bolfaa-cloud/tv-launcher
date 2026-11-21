@@ -110,11 +110,32 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         if (innerWidthPx <= 0 || columns <= 0) return design;
         int cell = innerWidthPx / columns;
         int fit = (int) ((cell - 12 * density) / FOCUS_SCALE);
-        return Math.max(Math.round(80 * density), Math.min(design, fit));
+        int w = Math.max(Math.round(80 * density), Math.min(design, fit));
+        // A square tile as wide as a banner tile reads too heavy: keep it a phone icon's share of the cell.
+        return squircle ? Math.round(w * SQUIRCLE_SHARE) : w;
+    }
+
+    /**
+     * config squircle_tiles: square tiles with a phone-like rounded-square outline, showing the app's own icon
+     * edge to edge (its adaptive layers) instead of its 16:9 banner. Set once from resources by applyShape().
+     */
+    static boolean squircle;
+    /** Width of a squircle tile against the banner tile the same column would get. */
+    static final float SQUIRCLE_SHARE = 0.78f;
+    /** Corner radius of a squircle tile as a share of its width (a phone home screen's rounded square). */
+    static final float SQUIRCLE_RADIUS = 0.25f;
+
+    static void applyShape(Resources res) {
+        squircle = res.getBoolean(R.bool.squircle_tiles);
+    }
+
+    /** Tile height over width: 1 for squircles, the banner's 101/180 otherwise. */
+    static float aspect() {
+        return squircle ? 1f : DESIGN_H_DP / DESIGN_W_DP;
     }
 
     static int tileHeightPx(int tileWidthPx) {
-        return Math.round(tileWidthPx * DESIGN_H_DP / DESIGN_W_DP);
+        return Math.round(tileWidthPx * aspect());
     }
 
     /** Height of one grid item: the tile, the name label under it and the item's own padding. */
@@ -161,7 +182,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 : TOP_ROOM_DP + COMPACT_BOTTOM_ROOM_DP) * density;
         float perItem = (gridHeightPx - reserved) / (rowsBelowDock + 1);
         float tileH = perItem - (dockRow ? ITEM_EXTRA_DP : COMPACT_ITEM_EXTRA_DP) * density;
-        int byHeight = Math.round(tileH * DESIGN_W_DP / DESIGN_H_DP);
+        int byHeight = Math.round(tileH / aspect());
         // Shrink at most to MIN_HEIGHT_FIT of the width-only size. Below that the tiles look lost in their wide
         // columns (2 rows under a titled dock came out at 80dp); the rows that still don't fit run off the bottom
         // and scroll, and MainActivity keeps the title's room above the dock.
@@ -247,7 +268,8 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.tileMenu = cfg.tileMenu;
         this.appLabels = cfg.appLabels;
         this.appBanners = cfg.appBanners;
-        this.uniformTiles = cfg.uniformTiles;
+        // A squircle shows the app's icon, never its banner.
+        this.uniformTiles = cfg.uniformTiles || squircle;
         // Tiles keep their identity across reload(), so a focused tile stays on its app instead of
         // its view being rebound to whatever app now sits in that slot.
         setHasStableIds(true);
@@ -305,6 +327,15 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             // The icon is only drawn (and sampled for the glow) when there is no banner, so a tile with a
             // banner skips loading and decoding it.
             Drawable icon = banner == null ? ri.loadIcon(pm) : null;
+            if (squircle && icon != null) {
+                // An adaptive icon fills the squircle edge to edge, like a phone's home screen; a legacy icon
+                // stays centred on its tinted card.
+                Drawable full = fullBleedIcon(icon);
+                if (full != null) {
+                    banner = full;
+                    icon = null;
+                }
+            }
             if (card != null) {
                 fresh.add(new Entry(Entry.CARD, label, component, banner, icon, card.caption, card.accent));
             } else {
@@ -353,6 +384,27 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         canvas.drawColor(0xFF15202B);
         icon.setBounds((w - side) / 2, (h - side) / 2, (w + side) / 2, (h + side) / 2);
         icon.draw(canvas);
+        return new android.graphics.drawable.BitmapDrawable(ctx.getResources(), bmp);
+    }
+
+    /**
+     * The adaptive icon's background and foreground drawn unmasked over a square bitmap, or null for a legacy icon.
+     * Android draws the layers 25% larger than the icon's bounds on every side and masks the middle; the tile's
+     * rounded outline is the mask here, so the squircle shows exactly what a phone launcher would.
+     */
+    private Drawable fullBleedIcon(Drawable icon) {
+        if (!(icon instanceof android.graphics.drawable.AdaptiveIconDrawable)) return null;
+        android.graphics.drawable.AdaptiveIconDrawable adaptive = (android.graphics.drawable.AdaptiveIconDrawable) icon;
+        int size = 240, extra = size / 4;
+        Bitmap bmp = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bmp);
+        Drawable back = adaptive.getBackground(), front = adaptive.getForeground();
+        if (back == null) canvas.drawColor(0xFF1C1C1E);
+        for (Drawable layer : new Drawable[]{back, front}) {
+            if (layer == null) continue;
+            layer.setBounds(-extra, -extra, size + extra, size + extra);
+            layer.draw(canvas);
+        }
         return new android.graphics.drawable.BitmapDrawable(ctx.getResources(), bmp);
     }
 
@@ -897,6 +949,7 @@ public class AppAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     /** Corner radius for a tile of this width: 16dp at the design width, proportionally less when smaller. */
     static float cornerRadius(int tileWidthPx, float density) {
+        if (squircle) return tileWidthPx * SQUIRCLE_RADIUS;
         return 16f * density * Math.min(1f, tileWidthPx / (DESIGN_W_DP * density));
     }
 

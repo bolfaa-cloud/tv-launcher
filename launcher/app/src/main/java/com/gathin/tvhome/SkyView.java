@@ -83,6 +83,18 @@ public class SkyView extends View {
         }
     }
 
+    /** config sky_dim: the palette pulled toward black by {@code dim} (0 to 0.9), sun glow fading with it. */
+    static Sky.Palette darkened(Sky.Palette p, float dim) {
+        float d = Math.max(0f, Math.min(0.9f, dim));
+        if (d == 0f) return p;
+        return new Sky.Palette(
+                Sky.lerpColor(p.top, 0xFF000000, d),
+                Sky.lerpColor(p.mid, 0xFF000000, d),
+                Sky.lerpColor(p.bottom, 0xFF000000, d * 0.85f),
+                Math.round(p.sun * (1f - d * 0.7f)),
+                p.sunX);
+    }
+
     private void render(boolean force) {
         Calendar now = Calendar.getInstance();
         int minute = Sky.minuteOfDay(now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE));
@@ -91,6 +103,7 @@ public class SkyView extends View {
 
         int[] sun = sunTimes();
         Sky.Palette sky = sun == null ? Sky.at(minute) : Sky.at(minute, sun[0], sun[1]);
+        sky = darkened(sky, getResources().getInteger(R.integer.sky_dim) / 100f);
         if (texture == null) texture = Bitmap.createBitmap(TEX_W, TEX_H, Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(texture);
         canvas.drawColor(0, android.graphics.PorterDuff.Mode.CLEAR);

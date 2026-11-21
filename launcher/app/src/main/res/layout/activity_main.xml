@@ -185,6 +185,34 @@
                 <!-- The header texts use gravity left, not start: the launcher lays out left to right
                      (no supportsRtl), and with start a right-to-left script such as Arabic would move to the
                      right edge of these full-width lines instead of staying under the clock. -->
+                <!-- Анис ТВ: the round emblem and the name, above the greeting. -->
+                <LinearLayout
+                    android:id="@+id/brand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginBottom="14dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/ic_logo"
+                        android:contentDescription="@null" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:includeFontPadding="false"
+                        android:text="@string/brand_name"
+                        android:textColor="#F2FFFFFF"
+                        android:textSize="18sp"
+                        android:fontFamily="@string/font_medium"
+                        android:letterSpacing="0.04" />
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/greeting"
                     android:gravity="left"
