@@ -281,7 +281,7 @@
     <bool name="lunar_date">false</bool>
     <!-- The date (with the Shamsi and lunar lines) on its own line under the clock instead of beside it, for a top bar
          whose pills leave the date too little room. Can also be set with "date_below_clock" in a theme. -->
-    <bool name="date_below_clock">false</bool>
+    <bool name="date_below_clock">true</bool>
     <!-- The language the launcher shows itself in, as a language tag ("vi", "pt-BR", "ar-EG-u-nu-latn"
          for Arabic with Western digits), instead of the TV's. For firmware
          that has no menu entry for the owner's language although the launcher is translated into it (a China-market
@@ -294,7 +294,7 @@
     <bool name="show_greeting">true</bool>
     <!-- The date and the line between the clock and the date in the clock's full white instead of dimmed. Can also be
          set with "header_white" in a theme. -->
-    <bool name="header_white">false</bool>
+    <bool name="header_white">true</bool>
     <!-- Optional VPN app the network pill opens (hold the pill for Wi-Fi settings), e.g. the package of the
          VPN you use. Empty: the pill opens Wi-Fi settings. The green VPN badge shows for any VPN either way;
          with an app set here, a red "VPN off" badge also shows while no VPN is up. -->

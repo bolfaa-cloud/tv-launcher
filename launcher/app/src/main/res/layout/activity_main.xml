@@ -209,6 +209,9 @@
                         android:text="@string/brand_name"
                         android:textColor="#F2FFFFFF"
                         android:textSize="18sp"
+                        android:shadowColor="#99000000"
+                        android:shadowDy="1"
+                        android:shadowRadius="8"
                         android:fontFamily="@string/font_medium"
                         android:letterSpacing="0.04" />
                 </LinearLayout>
@@ -221,7 +224,10 @@
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:layout_marginStart="4dp"
-                    android:textColor="#8CFFFFFF"
+                    android:textColor="#B3FFFFFF"
+                    android:shadowColor="#99000000"
+                    android:shadowDy="1"
+                    android:shadowRadius="8"
                     android:textSize="12sp"
                     android:fontFamily="@string/font_medium"
                     android:letterSpacing="0.22"
@@ -240,7 +246,10 @@
                         android:format12Hour="h:mm"
                         android:format24Hour="HH:mm"
                         android:textColor="#FFFFFFFF"
-                        android:textSize="52sp"
+                        android:textSize="110sp"
+                        android:shadowColor="#80000000"
+                        android:shadowDy="2"
+                        android:shadowRadius="12"
                         android:fontFamily="@string/font_light"
                         android:letterSpacing="-0.04"
                         android:fontFeatureSettings="tnum"
@@ -306,10 +315,30 @@
                             android:format12Hour="@string/date_format_home"
                             android:format24Hour="@string/date_format_home"
                             android:textColor="#A6FFFFFF"
-                            android:textSize="14sp"
+                            android:textSize="16sp"
+                            android:shadowColor="#99000000"
+                            android:shadowDy="1"
+                            android:shadowRadius="8"
                             android:fontFamily="@string/font_regular"
                             android:letterSpacing="0.14"
                             android:textAllCaps="true" />
+
+                        <!-- Анис ТВ: current weather from Open-Meteo (Weather), hidden until the first answer. -->
+                        <TextView
+                            android:id="@+id/weather"
+                            android:gravity="left"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:singleLine="true"
+                            android:ellipsize="end"
+                            android:textColor="#F2FFFFFF"
+                            android:textSize="18sp"
+                            android:shadowColor="#99000000"
+                            android:shadowDy="1"
+                            android:shadowRadius="8"
+                            android:fontFamily="@string/font_regular"
+                            android:visibility="gone" />
 
                         <!-- Lunar date ("Lunar 13/9 · Year of the Horse"), shown when lunar_date is on. -->
                         <TextView

@@ -597,6 +597,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         lunarOffset = Lunar.offsetFor(cfg.lunarUtcOffset, Locale.getDefault());
         if (lunar) lunarDate.setVisibility(View.VISIBLE);
         greetingName = cfg.greetingName;
+        // Анис ТВ: the weather line sits in the date column, so it follows the date wherever it goes.
+        Weather.attach(findViewById(R.id.weather), getString(R.string.latitude), getString(R.string.longitude));
         if (cfg.dateBelowClock) moveDateBelowClock();
         if (cfg.dateBelowClock && cfg.iconOnlyButtons && !cfg.topMenu
                 && !getResources().getBoolean(R.bool.rtl_menu_bar)) {
