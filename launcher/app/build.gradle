@@ -17,6 +17,20 @@ android {
         versionName '3.6'
     }
 
+    signingConfigs {
+        // Постоянный ключ «Анис ТВ» из секретов репозитория (ANISTV_KEYSTORE_B64 / ANISTV_KEYSTORE_PASSWORD),
+        // чтобы каждая новая сборка ставилась поверх старой. Без секретов остаётся отладочный ключ.
+        anistv {
+            def ks = System.getenv('ANISTV_KEYSTORE_FILE')
+            if (ks && file(ks).exists()) {
+                storeFile file(ks)
+                storePassword System.getenv('ANISTV_KEYSTORE_PASSWORD')
+                keyAlias 'anistv'
+                keyPassword System.getenv('ANISTV_KEYSTORE_PASSWORD')
+            }
+        }
+    }
+
     buildTypes {
         release {
             // R8 strips and optimises the code (AndroidX included): smaller APK, faster start on a slow TV CPU.
@@ -24,7 +38,7 @@ android {
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             // Sideloaded over ADB, never published: sign with the debug key so it installs over a debug build.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.anistv.storeFile ? signingConfigs.anistv : signingConfigs.debug
         }
     }
 

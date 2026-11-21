@@ -21,8 +21,20 @@ jobs:
         with:
           packages: platforms;android-34 build-tools;34.0.0
       - uses: gradle/actions/setup-gradle@748248ddd2a24f49513d8f472f81c3a07d4d50e1 # v4.4.4
+      - name: Signing key
+        env:
+          KEYSTORE_B64: ${{ secrets.ANISTV_KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/anistv.jks"
+            echo "ANISTV_KEYSTORE_FILE=$RUNNER_TEMP/anistv.jks" >> "$GITHUB_ENV"
+          else
+            echo "::warning::Секрет ANISTV_KEYSTORE_B64 не задан: сборка подписана случайным ключом и не встанет поверх старой версии"
+          fi
       - name: Build release APK
         working-directory: launcher
+        env:
+          ANISTV_KEYSTORE_PASSWORD: ${{ secrets.ANISTV_KEYSTORE_PASSWORD }}
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon assembleRelease
