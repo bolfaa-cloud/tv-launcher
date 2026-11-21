@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Russian weekday and month names need two lines (date_format_home has a line break). -->
-    <bool name="date_single_line">false</bool>
+    <!-- Анис ТВ: one line ("суббота, 21 ноября") now that the date has its own row under the large clock. -->
+    <bool name="date_single_line">true</bool>
 </resources>

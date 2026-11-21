@@ -600,7 +600,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // Анис ТВ: the weather line sits in the date column, so it follows the date wherever it goes.
         Weather.attach(findViewById(R.id.weather), getString(R.string.latitude), getString(R.string.longitude));
         if (cfg.dateBelowClock) moveDateBelowClock();
-        if (cfg.dateBelowClock && cfg.iconOnlyButtons && !cfg.topMenu
+        // Анис ТВ: the labelled pills too, or they sink to the weather line under the large clock.
+        if (cfg.dateBelowClock && !cfg.topMenu
                 && !getResources().getBoolean(R.bool.rtl_menu_bar)) {
             alignDateBelowIconsWithClock();
         }
