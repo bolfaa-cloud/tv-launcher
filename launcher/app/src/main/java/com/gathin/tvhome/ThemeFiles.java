@@ -9,6 +9,7 @@ final class ThemeFiles {
     /** The names tools/theme.sh accepts for a collection image, and the types WallpaperRotation reads. */
     private static final Pattern IMAGE = Pattern.compile("[A-Za-z0-9_.-]+\\.(jpg|jpeg|png|webp)",
             Pattern.CASE_INSENSITIVE);
+    private static final Pattern VIDEO = Pattern.compile("[A-Za-z0-9_.-]+\\.(mp4|webm|mkv)", Pattern.CASE_INSENSITIVE);
 
     private ThemeFiles() {}
 
@@ -24,6 +25,10 @@ final class ThemeFiles {
                 && (collectionImage(segments.get(1)) || WallpaperCaptions.FILE_NAME.equals(segments.get(1)))) {
             return WALLPAPERS + "/" + segments.get(1);
         }
+        if (segments.size() == 2 && VideoWallpaper.COLLECTION.equals(segments.get(0))
+                && collectionVideo(segments.get(1))) {
+            return VideoWallpaper.COLLECTION + "/" + segments.get(1);
+        }
         return null;
     }
 
@@ -32,7 +37,17 @@ final class ThemeFiles {
         return segments != null && segments.size() == 1 && WALLPAPERS.equals(segments.get(0));
     }
 
+    /** Анис ТВ: true for "videos" alone: a delete of it clears the video collection. */
+    static boolean isVideoCollection(List<String> segments) {
+        return segments != null && segments.size() == 1 && VideoWallpaper.COLLECTION.equals(segments.get(0));
+    }
+
     static boolean collectionImage(String name) {
         return name != null && !name.startsWith(".") && IMAGE.matcher(name).matches();
+    }
+
+    /** Анис ТВ: a video in the videos/ collection, named like the pictures. */
+    static boolean collectionVideo(String name) {
+        return name != null && !name.startsWith(".") && VIDEO.matcher(name).matches();
     }
 }

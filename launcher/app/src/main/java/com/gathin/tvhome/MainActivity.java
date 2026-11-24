@@ -516,11 +516,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // the theme's background, so launch looks the same.
         getWindow().setBackgroundDrawable(null);
         wallpaperPlayer = new WallpaperPlayer(this, root, cfg);
-        File video = cfg.wallpaperEnabled ? VideoWallpaper.file(this) : null;
-        if (video != null) {
-            // Over the picture, which stays until the video's first frame and if the video cannot play.
-            videoWallpaper = VideoWallpaper.attach(root, wallpaperPlayer.layerIndex(), video, cfg.wallpaperDim,
-                    () -> wallpaperPlayer.yieldToVideo());
+        List<File> videos = cfg.wallpaperEnabled ? VideoWallpaper.files(this) : java.util.Collections.emptyList();
+        if (!videos.isEmpty()) {
+            // Over the picture, which stays until the video's first frame and if no video can play.
+            videoWallpaper = VideoWallpaper.attach(root, wallpaperPlayer.layerIndex(), videos,
+                    cfg.wallpaperRotationMinutes * 60_000L, cfg.wallpaperDim, () -> wallpaperPlayer.yieldToVideo());
         }
         sky = findViewById(R.id.sky);
         sky.setIntensity(cfg.skyIntensity);
