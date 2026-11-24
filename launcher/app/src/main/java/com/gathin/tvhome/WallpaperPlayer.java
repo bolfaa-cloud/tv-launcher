@@ -137,6 +137,22 @@ final class WallpaperPlayer {
         active = false;
     }
 
+    /** Where a layer over the picture goes in root: right above the picture, or at the bottom without one. */
+    int layerIndex() {
+        return image.getParent() == root ? root.indexOfChild(image) + 1 : 0;
+    }
+
+    /**
+     * Анис ТВ: a video wallpaper is on screen over the picture. Stop rotating and let the picture go, so Home
+     * does not keep a full-screen bitmap under every video frame.
+     */
+    void yieldToVideo() {
+        close();
+        image.setImageDrawable(null);
+        current = null;
+        displayed = "";
+    }
+
     /** Drops the wallpaper texture when Home is hidden and Android asks the process to free memory. */
     void releaseForMemoryPressure() {
         if (current == null) return;

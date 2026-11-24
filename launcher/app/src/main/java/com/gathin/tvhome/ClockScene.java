@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -65,6 +66,10 @@ final class ClockScene {
     private String order;
     private Map<String, Set<String>> moods;
     private String latitude, longitude;
+    /** Анис ТВ: the theme's wallpaper.mp4 behind the clock, its dim, and the player once started. */
+    private File videoFile;
+    private int videoDim;
+    private VideoWallpaper video;
 
     private final Runnable tick = new Runnable() {
         @Override
@@ -99,11 +104,23 @@ final class ClockScene {
         handler.removeCallbacks(tick);
         handler.postDelayed(tick, MOVE_MS);
         clockRefresh.start();
-        if (wallpaperFile != null && !wallpaperShown) loadWallpaper();
+        if (videoFile != null) {
+            if (video == null) {
+                ViewGroup parent = (ViewGroup) ambient.getParent();
+                video = VideoWallpaper.attach(parent, parent.indexOfChild(ambient) + 1, videoFile, videoDim, () -> {
+                    wallpaperShown = true;   // no more glow shifts under the video
+                    ambient.setBackground(null);
+                });
+            }
+            video.start();
+        } else if (wallpaperFile != null && !wallpaperShown) {
+            loadWallpaper();
+        }
     }
 
     void stop() {
         handler.removeCallbacksAndMessages(null);   // the tick and any glow steps still queued
+        if (video != null) video.stop();
         clockRefresh.stop();
         content.animate().cancel();
         wallpaperGeneration++;   // a decode still running must not attach its picture to a stopped scene
@@ -127,6 +144,12 @@ final class ClockScene {
         glowOff = !cfg.clockGlow;
         if (glowOff) ambient.setBackground(null);
         if (!cfg.clockWallpaper) return;
+        wallpaperShade = (cfg.clockWallpaperDim * 255 / 100) << 24;
+        wallpaperRes = ctx.getResources();
+        // Анис ТВ: the theme's video wallpaper, when there is one, instead of the pictures.
+        videoFile = cfg.wallpaperEnabled ? VideoWallpaper.file(ctx) : null;
+        videoDim = cfg.clockWallpaperDim;
+        if (videoFile != null) return;
         // What Home plays, and Config puts the single wallpaper in it when a theme has no collection.
         // Reading cfg.wallpaper first held the screensaver on wallpaper.jpg while Home rotated.
         if (cfg.wallpapers.isEmpty()) {

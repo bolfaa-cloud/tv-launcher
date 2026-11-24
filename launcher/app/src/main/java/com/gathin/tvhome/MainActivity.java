@@ -145,6 +145,8 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private RecyclerView grid;
     private FrameLayout root;
     private WallpaperPlayer wallpaperPlayer;
+    /** Анис ТВ: wallpaper.mp4 from the theme over the pictures, or null without one. */
+    private VideoWallpaper videoWallpaper;
     private GlassView glass;
     private View ambient;
     private TextView heroName;
@@ -514,6 +516,12 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         // the theme's background, so launch looks the same.
         getWindow().setBackgroundDrawable(null);
         wallpaperPlayer = new WallpaperPlayer(this, root, cfg);
+        File video = cfg.wallpaperEnabled ? VideoWallpaper.file(this) : null;
+        if (video != null) {
+            // Over the picture, which stays until the video's first frame and if the video cannot play.
+            videoWallpaper = VideoWallpaper.attach(root, wallpaperPlayer.layerIndex(), video, cfg.wallpaperDim,
+                    () -> wallpaperPlayer.yieldToVideo());
+        }
         sky = findViewById(R.id.sky);
         sky.setIntensity(cfg.skyIntensity);
         glass = findViewById(R.id.glass);
@@ -1144,6 +1152,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         if (gameDay != null) gameDay.start();
         sky.update();
         wallpaperPlayer.start();
+        if (videoWallpaper != null) videoWallpaper.start();
         handler.postDelayed(minuteTick, MINUTE_MS);
         if (festive && lamp != null) {
             lamp.start();
@@ -1318,6 +1327,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         root.removeCallbacks(showIdleClock);
         endReorder();   // Home or another app while reordering keeps the order so far
         wallpaperPlayer.stop();
+        if (videoWallpaper != null) videoWallpaper.stop();
         stopAmbientAnimation();
         hero.animate().cancel();
         ambient.animate().cancel();
@@ -1366,6 +1376,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         heroArtCache.clear();
         heroArtKey = null;
         wallpaperPlayer.releaseForMemoryPressure();
+        if (videoWallpaper != null) videoWallpaper.release();
         tileRefresh.invalidate();
     }
 
@@ -1398,6 +1409,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         unregisterReceiver(packageReceiver);
         if (openOnStartOnWake) unregisterReceiver(wakeReceiver);
         wallpaperPlayer.close();
+        if (videoWallpaper != null) videoWallpaper.release();
         ConnectivityManager cm = getApplicationContext().getSystemService(ConnectivityManager.class);   // as registered
         TvInputManager tim = (TvInputManager) getSystemService(TV_INPUT_SERVICE);
         if (tim != null) tim.unregisterCallback(inputCallback);
